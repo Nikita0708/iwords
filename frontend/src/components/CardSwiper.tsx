@@ -71,7 +71,7 @@ export function CardSwiper({ cards, reversed }: Props) {
           initial="enter"
           animate="center"
           exit="exit"
-          transition={{ duration: 0.32, ease: [0.4, 0, 0.2, 1] }}
+          transition={{ duration: 0.18, ease: [0.4, 0, 0.2, 1] }}
           drag="y"
           dragConstraints={{ top: 0, bottom: 0 }}
           dragElastic={0.18}
