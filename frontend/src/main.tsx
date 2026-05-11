@@ -28,6 +28,8 @@ const tg = window.Telegram?.WebApp;
 if (tg) {
   tg.ready?.();
   tg.expand?.();
+  // @ts-ignore — появился в TG WebApp 7.7
+  tg.disableVerticalSwipes?.();
   const p = tg.themeParams ?? {};
   applyTheme({
     '--tg-theme-bg-color': p.bg_color ?? '',
