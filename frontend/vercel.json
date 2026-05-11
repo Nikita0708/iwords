@@ -2,7 +2,7 @@
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "https://ТВОЙ_BACKEND.up.railway.app/api/:path*"
+      "destination": "https://iwords-production.up.railway.app/api/:path*"
     }
   ]
 }
