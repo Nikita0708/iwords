@@ -1,0 +1,16 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "frontend",
+      "runtimeExecutable": "node",
+      "runtimeArgs": [
+        "/Users/nikitareva/Desktop/iwords/frontend/node_modules/.bin/vite",
+        "--root",
+        "/Users/nikitareva/Desktop/iwords/frontend"
+      ],
+      "port": 5173,
+      "autoPort": true
+    }
+  ]
+}

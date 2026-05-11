@@ -1,0 +1,24 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html, body, #root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overscroll-behavior: none;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: var(--tg-theme-secondary-bg-color);
+  color: var(--tg-theme-text-color);
+}
+
+/* Hide scrollbar but keep scroll */
+::-webkit-scrollbar { width: 0; }
+
+/* Prevent text selection during swipe */
+.no-select { user-select: none; }
