@@ -3,19 +3,20 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useStore } from '../store';
 import { CreateCardModal } from '../components/CreateCardModal';
+import { EditCardModal } from '../components/EditCardModal';
 import type { Card } from '../types';
 import { api } from '../api';
 
 export function DeckView() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { decks, removeCard } = useStore();
+  const { decks } = useStore();
   const deck = decks.find((d) => d._id === id);
 
   const [cards, setCards] = useState<Card[]>([]);
   const [loading, setLoading] = useState(true);
   const [showCreate, setShowCreate] = useState(false);
-  const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [editCard, setEditCard] = useState<Card | null>(null);
 
   const load = async () => {
     if (!id) return;
@@ -32,16 +33,6 @@ export function DeckView() {
     load();
   }, [id]);
 
-  const handleDelete = async (cardId: string) => {
-    if (!confirm('Удалить карточку?')) return;
-    setDeletingId(cardId);
-    try {
-      await removeCard(cardId);
-      setCards((c) => c.filter((x) => x._id !== cardId));
-    } finally {
-      setDeletingId(null);
-    }
-  };
 
   return (
     <div className="flex flex-col min-h-screen" style={{ background: 'var(--tg-theme-secondary-bg-color)' }}>
@@ -88,8 +79,9 @@ export function DeckView() {
               layout
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="rounded-2xl overflow-hidden"
+              className="rounded-2xl overflow-hidden cursor-pointer active:opacity-70 transition-opacity"
               style={{ background: 'var(--tg-theme-bg-color)' }}
+              onClick={() => setEditCard(card)}
             >
               <div className="flex">
                 {card.imageUrl && (
@@ -103,14 +95,9 @@ export function DeckView() {
                     {card.back}
                   </p>
                 </div>
-                <button
-                  onClick={() => handleDelete(card._id)}
-                  disabled={deletingId === card._id}
-                  className="px-4 flex items-center opacity-40 hover:opacity-80 transition-opacity"
-                  style={{ color: 'var(--tg-theme-text-color)' }}
-                >
-                  🗑
-                </button>
+                <div className="px-4 flex items-center" style={{ color: 'var(--tg-theme-hint-color)' }}>
+                  ›
+                </div>
               </div>
             </motion.div>
           ))
@@ -133,6 +120,11 @@ export function DeckView() {
         open={showCreate}
         deckId={id!}
         onClose={() => { setShowCreate(false); load(); }}
+      />
+
+      <EditCardModal
+        card={editCard}
+        onClose={() => { setEditCard(null); load(); }}
       />
     </div>
   );
