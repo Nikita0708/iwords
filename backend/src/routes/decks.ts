@@ -3,6 +3,7 @@ import { body, param, validationResult } from 'express-validator';
 import { Deck } from '../models/Deck';
 import { Card } from '../models/Card';
 import cloudinary from '../config/cloudinary';
+import { resolveReadUserId } from '../middleware/access';
 
 const router = Router();
 
@@ -11,7 +12,7 @@ function getUserId(req: Request): string {
 }
 
 router.get('/', async (req: Request, res: Response) => {
-  const userId = getUserId(req);
+  const userId = resolveReadUserId(getUserId(req));
   const decks = await Deck.find({ userId }).sort({ createdAt: -1 });
   const decksWithCount = await Promise.all(
     decks.map(async (deck) => {

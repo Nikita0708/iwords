@@ -4,6 +4,7 @@ import { Card } from '../models/Card';
 import { Deck } from '../models/Deck';
 import { upload } from '../middleware/upload';
 import cloudinary from '../config/cloudinary';
+import { resolveReadUserId } from '../middleware/access';
 
 const router = Router();
 
@@ -13,7 +14,7 @@ function getUserId(req: Request): string {
 
 // Get all cards across all decks
 router.get('/all', async (req: Request, res: Response) => {
-  const userId = getUserId(req);
+  const userId = resolveReadUserId(getUserId(req));
   const cards = await Card.find({ userId }).populate('deckId', 'name').sort({ createdAt: -1 });
   res.json(cards);
 });
@@ -23,7 +24,7 @@ router.get('/deck/:deckId', [param('deckId').isMongoId()], async (req: Request, 
   const errors = validationResult(req);
   if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
 
-  const userId = getUserId(req);
+  const userId = resolveReadUserId(getUserId(req));
   const deck = await Deck.findOne({ _id: req.params.deckId, userId });
   if (!deck) return res.status(404).json({ error: 'Deck not found' });
 
