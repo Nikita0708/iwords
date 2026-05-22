@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useStore } from '../store';
 
@@ -17,6 +17,25 @@ export function CreateCardModal({ open, deckId, onClose }: Props) {
   const [error, setError] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
   const addCard = useStore((s) => s.addCard);
+
+  useEffect(() => {
+    if (!open) return;
+    const handlePaste = (e: ClipboardEvent) => {
+      const items = e.clipboardData?.items;
+      if (!items) return;
+      for (const item of items) {
+        if (item.type.startsWith('image/')) {
+          const file = item.getAsFile();
+          if (!file) continue;
+          setImage(file);
+          setPreview(URL.createObjectURL(file));
+          break;
+        }
+      }
+    };
+    window.addEventListener('paste', handlePaste);
+    return () => window.removeEventListener('paste', handlePaste);
+  }, [open]);
 
   const pickImage = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -124,7 +143,7 @@ export function CreateCardModal({ open, deckId, onClose }: Props) {
                   style={{ borderColor: 'var(--tg-theme-hint-color)', color: 'var(--tg-theme-hint-color)' }}
                 >
                   <span className="text-3xl">🖼</span>
-                  <span className="text-sm">Нажми чтобы выбрать</span>
+                  <span className="text-sm">Нажми или вставь из буфера (⌘V)</span>
                 </button>
               )}
               <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={pickImage} />

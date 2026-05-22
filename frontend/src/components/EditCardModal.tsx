@@ -30,6 +30,26 @@ export function EditCardModal({ card, onClose }: Props) {
     }
   }, [card]);
 
+  useEffect(() => {
+    if (!card) return;
+    const handlePaste = (e: ClipboardEvent) => {
+      const items = e.clipboardData?.items;
+      if (!items) return;
+      for (const item of items) {
+        if (item.type.startsWith('image/')) {
+          const file = item.getAsFile();
+          if (!file) continue;
+          setImage(file);
+          setPreview(URL.createObjectURL(file));
+          setRemoveImage(false);
+          break;
+        }
+      }
+    };
+    window.addEventListener('paste', handlePaste);
+    return () => window.removeEventListener('paste', handlePaste);
+  }, [card]);
+
   const pickImage = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -158,7 +178,7 @@ export function EditCardModal({ card, onClose }: Props) {
                   style={{ borderColor: 'var(--tg-theme-hint-color)', color: 'var(--tg-theme-hint-color)' }}
                 >
                   <span className="text-2xl">🖼</span>
-                  <span className="text-sm">Нажми чтобы выбрать</span>
+                  <span className="text-sm">Нажми или вставь из буфера (⌘V)</span>
                 </button>
               )}
               <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={pickImage} />
